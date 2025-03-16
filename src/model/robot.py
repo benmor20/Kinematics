@@ -52,7 +52,15 @@ class RobotArm:
         Args:
             arm_sections: description of each section of the arm in order
         """
-        raise NotImplementedError
+        self._arm_sections = [copy.deepcopy(sec) for sec in arm_sections]
+        self._joints = np.array(
+            [
+                (sec.theta_min + sec.theta_max) / 2
+                if sec.theta_min is not None and sec.theta_max is not None
+                else 0
+                for sec in self._arm_sections
+            ]
+        )
 
     @property
     def num_sections(self) -> int:
@@ -60,7 +68,7 @@ class RobotArm:
         Returns:
             the number of sections this robot arm has
         """
-        raise NotImplementedError
+        return len(self._arm_sections)
 
     @property
     def joints(self) -> np.ndarray:
@@ -68,7 +76,7 @@ class RobotArm:
         Returns:
             N-vector (N = self.num_sections) giving the current position of the joints
         """
-        raise NotImplementedError
+        return self._joints.copy()
 
     @property
     def arm_sections(self) -> list[ArmSectionDescription]:
@@ -76,7 +84,7 @@ class RobotArm:
         Returns:
             Descriptions of each arm section, in order
         """
-        raise NotImplementedError
+        return [copy.deepcopy(sec) for sec in self._arm_sections]
 
     def set_joints(self, new_joints: np.ndarray) -> None:
         """
