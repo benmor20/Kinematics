@@ -97,7 +97,17 @@ class RobotArm:
             InvalidJointsError: if the input is the wrong shape or if any of the given joints violate joint limits for
                 their section
         """
-        raise NotImplementedError
+        if new_joints.ndim != 1:
+            raise InvalidJointsError(f"Given joints must be 1D - shape is {new_joints.shape}")
+        if new_joints.shape[0] != self.num_sections:
+            raise InvalidJointsError(f"Expected {self.num_sections} joint positions, got {new_joints.shape[0]}")
+        for idx, (angle, sec) in enumerate(zip(new_joints, self._arm_sections)):
+            if sec.theta_min is not None and angle < sec.theta_min:
+                raise InvalidJointsError(f"Joint {idx} violates minimum angle of {sec.theta_min} (received {angle})")
+            if sec.theta_max is not None and angle < sec.theta_max:
+                raise InvalidJointsError(f"Joint {idx} violates maximum angle of {sec.theta_max} (received {angle})")
+
+        self._joints = new_joints
 
     def get_tip_pose(self) -> np.ndarray:
         """
