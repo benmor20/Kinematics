@@ -94,14 +94,14 @@ class RobotArm:
     def get_tip_pose(self) -> np.ndarray:
         """
         Returns:
-            4x4 matrix giving the pose of the end of this robot arm in world frame
+            4x4 matrix giving the pose of the end of this robot arm in robot frame
         """
         raise NotImplementedError
 
     def get_tip_position(self) -> np.ndarray:
         """
         Returns:
-            3-element vector giving the position of the end of this robot arm in world frame
+            3-element vector giving the position of the end of this robot arm in robot frame
         """
         raise NotImplementedError
 
@@ -110,7 +110,7 @@ class RobotArm:
         Perform inverse kinematics to determine the joints that result in the tip of this arm ending in the given pose
 
         Args:
-            target_pose: 4x4 ndarray giving the target pose for the IK problem
+            target_pose: 4x4 ndarray giving the target pose in robot frame for the IK problem
 
         Returns:
             N-vector (N=self.num_sections) giving the joints the robot would need to be at for the tip to reach the
@@ -127,7 +127,7 @@ class RobotArm:
         and set the joints to match
 
         Args:
-            target_pose: 4x4 ndarray giving the target pose for tip to end up at
+            target_pose: 4x4 ndarray giving the target pose in robot frame for tip to end up at
 
         Raises:
             IKFailure: if the robot cannot reach the given pose
