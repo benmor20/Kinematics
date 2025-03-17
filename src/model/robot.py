@@ -103,9 +103,13 @@ class RobotArm:
             raise InvalidJointsError(f"Expected {self.num_sections} joint positions, got {new_joints.shape[0]}")
         for idx, (angle, sec) in enumerate(zip(new_joints, self._arm_sections)):
             if sec.theta_min is not None and angle < sec.theta_min:
-                raise InvalidJointsError(f"Joint {idx} violates minimum angle of {sec.theta_min} (received {angle})")
-            if sec.theta_max is not None and angle < sec.theta_max:
-                raise InvalidJointsError(f"Joint {idx} violates maximum angle of {sec.theta_max} (received {angle})")
+                raise InvalidJointsError(
+                    f"Joint {idx} violates minimum angle of {sec.theta_min:.5f} (received {angle:.5f})"
+                )
+            if sec.theta_max is not None and angle > sec.theta_max:
+                raise InvalidJointsError(
+                    f"Joint {idx} violates maximum angle of {sec.theta_max:.5f} (received {angle:.5f})"
+                )
 
         self._joints = new_joints
 
