@@ -52,7 +52,15 @@ class RobotArm:
         Args:
             arm_sections: description of each section of the arm in order
         """
-        raise NotImplementedError
+        self._arm_sections = [copy.deepcopy(sec) for sec in arm_sections]
+        self._joints = np.array(
+            [
+                (sec.theta_min + sec.theta_max) / 2
+                if sec.theta_min is not None and sec.theta_max is not None
+                else 0
+                for sec in self._arm_sections
+            ]
+        )
 
     @property
     def num_sections(self) -> int:
@@ -60,7 +68,7 @@ class RobotArm:
         Returns:
             the number of sections this robot arm has
         """
-        raise NotImplementedError
+        return len(self._arm_sections)
 
     @property
     def joints(self) -> np.ndarray:
@@ -68,7 +76,7 @@ class RobotArm:
         Returns:
             N-vector (N = self.num_sections) giving the current position of the joints
         """
-        raise NotImplementedError
+        return self._joints.copy()
 
     @property
     def arm_sections(self) -> list[ArmSectionDescription]:
@@ -76,7 +84,7 @@ class RobotArm:
         Returns:
             Descriptions of each arm section, in order
         """
-        raise NotImplementedError
+        return [copy.deepcopy(sec) for sec in self._arm_sections]
 
     def set_joints(self, new_joints: np.ndarray) -> None:
         """
@@ -89,7 +97,21 @@ class RobotArm:
             InvalidJointsError: if the input is the wrong shape or if any of the given joints violate joint limits for
                 their section
         """
-        raise NotImplementedError
+        if new_joints.ndim != 1:
+            raise InvalidJointsError(f"Given joints must be 1D - shape is {new_joints.shape}")
+        if new_joints.shape[0] != self.num_sections:
+            raise InvalidJointsError(f"Expected {self.num_sections} joint positions, got {new_joints.shape[0]}")
+        for idx, (angle, sec) in enumerate(zip(new_joints, self._arm_sections)):
+            if sec.theta_min is not None and angle < sec.theta_min:
+                raise InvalidJointsError(
+                    f"Joint {idx} violates minimum angle of {sec.theta_min:.5f} (received {angle:.5f})"
+                )
+            if sec.theta_max is not None and angle > sec.theta_max:
+                raise InvalidJointsError(
+                    f"Joint {idx} violates maximum angle of {sec.theta_max:.5f} (received {angle:.5f})"
+                )
+
+        self._joints = new_joints
 
     def get_tip_pose(self) -> np.ndarray:
         """

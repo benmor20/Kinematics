@@ -17,7 +17,8 @@ class Scene:
             robot_arm: the RobotArm this scene is centered around
             robot_pose: 4x4 ndarray, the pose of the robot in world frame, or None to align robot and world frame
         """
-        raise NotImplementedError
+        self._robot_arm = robot_arm
+        self._robot_pose = robot_pose
 
     @property
     def robot_arm(self) -> RobotArm:
@@ -25,4 +26,12 @@ class Scene:
         Returns:
             the RobotArm this scene is centered around
         """
-        raise NotImplementedError
+        return self._robot_arm
+
+    @property
+    def robot_pose(self) -> np.ndarray:
+        """
+        Returns:
+            4x4 ndarray, the pose of the robot in world frame
+        """
+        return self._robot_pose.copy()
