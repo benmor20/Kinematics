@@ -1,0 +1,7 @@
+<joint name="joint{data["parent_idx"]}-{data["child_idx"]}" type="revolute">
+    <origin xyz="{data["parent_radius"] + data["child_radius"]} 0 {data["parent_length"]}" rpy="0 0 0"/>
+    <parent link="section{data["parent_idx"]}"/>
+    <child link="section{data["child_idx"]}"/>
+    <axis xyz="1 0 0"/>
+    {("<limit " + ((' lower="' + str(data["lower_lim"]) + '"') if data["lower_lim"] is not None else '') ((' upper="' + str(data["upper_lim"]) + '"') if data["upper_lim"] is not None else '') + " />") if data["lower_lim"] is not None or data["upper_lim"] is not None else ""}
+</joint>

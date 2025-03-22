@@ -1,0 +1,12 @@
+<link name="section{data["section_idx"]}">
+    <collision name="collision">
+        <geometry>
+            <cylinder radius="{data["radius"]}" length="{data["length"]}"/>
+        </geometry>
+    </collision>
+    <visual name="visual">
+        <geometry>
+            <cylinder radius="{data["radius"]}" length="{data["length"]}"/>
+        </geometry>
+    </visual>
+</link>

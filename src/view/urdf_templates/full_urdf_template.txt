@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+    <robot name="RobotArm">
+        {data["links_and_joints"]}
+    </robot>
+</xml>
